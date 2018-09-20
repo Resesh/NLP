@@ -15,6 +15,8 @@ from sklearn.metrics import f1_score
 from Get_MNIST import get_mnist
 
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 # ハイパーパラメータの設定
 
 in_dim  = 784
@@ -73,6 +75,34 @@ for epoch in range(num_epochs + 1):
 
     for x, t in train_data_loader:
         true = t.tolist()
-        
+        trues_train.extend(true)
+
+        #勾配初期化
+        mlp.zero_grad()
+
+        #onto GPU
+
+        x = x.to(device)
+        x = x.view(x.size(0), -1)
+        t = t.to(device)
+
+         #順伝播
+        y = mlp.forward(x)
+
+        #誤差計算
+        loss = criterion(y, t)
+
+        # 逆伝播
+        loss.backward()
+
+        #パラメータ更新
+        optimizer.step()
+
+        #出力を格納
+        pred = y.argmax(1).tolist()
+        preds_train.extend(pred)
+
+        losses_train.append(loss.tolist())
+
 
 
