@@ -104,5 +104,44 @@ for epoch in range(num_epochs + 1):
 
         losses_train.append(loss.tolist())
 
+    #evaluation
+    mlp.eval()
+
+    preds = []
+
+    for x, t in test_data_loader:
+        true = t.tolist()
+        trues_test.extend(true)
+
+        x = x.to(device)
+        x = x.vieww(x.size(0), -1)
+        t = t.to(device)
+
+        y = mlp.forward(x)
+
+        loss = criterion(y, t)
+
+        pred = y.argmax(1).tolist()
+        preds += pred
+        preds_test.extend(pred)
+
+        losses_test.append(loss.tolist())
+
+
+    print('EPOCH: {}, Train [Loss: {:.3f}, F1: {:.3f}], Valid [Loss: {:.3f}, F1: {:.3f}]'.format(
+        epoch,
+        np.mean(losses_train),
+        f1_score(trues_train, preds_train, average='macro'),
+        np.mean(losses_test),
+        f1_score(trues_test, preds_test, average='macro')
+    ))
+
+# 予測結果を保存
+    SUBMISSION_PATH = 'submission.csv'
+    with open(SUBMISSION_PATH, 'w') as f:
+        writer = csv.writer(f, lineterminator='\n')
+    writer.writerow(preds)
+
+
 
 
