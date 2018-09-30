@@ -13,9 +13,7 @@ def get_mnist(train_data, test_data):
     )
 
     test_data = torchvision.datasets.FashionMNIST(
-    './data/fashion-mnist', train = True, 
+    './data/fashion-mnist', train = False, 
     transform = torchvision.transforms.ToTensor(), download = True
 )
     return train_data, test_data
-
-
