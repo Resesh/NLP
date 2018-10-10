@@ -1,3 +1,7 @@
 {
-    "python.pythonPath": "/Users/shota/anaconda/bin/python"
+    "python.pythonPath": "/Users/shota/.pyenv/versions/anaconda3-5.2.0/bin/python",
+    "python.linting.pylintEnabled": false,
+    "python.linting.flake8Enabled": true,
+    "python.linting.enabled": true,
+    "git.ignoreLimitWarning": true
 }
