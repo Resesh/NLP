@@ -62,6 +62,11 @@ def load_data():
     return line
 
 
+def pad_seq(seq, max_length):
+    seq += [PAD for i in range(max_length - len(seq))]
+    return seq
+
+
 text = load_data()
 # どこまで取り出すかは調整
 text = text[:1000000]
