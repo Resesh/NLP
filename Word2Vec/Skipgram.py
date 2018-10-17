@@ -41,7 +41,7 @@ class DataloaderSG(object):
                 if self.s_pointer >= self.max_s_poiner:
                     self.s_pointer = 0
                     raise StopIteration
-        batch_X = torch.tensor(word_X, dtype = torch.long, device = device)
-        batch_Y = torch.tensor(word_Y, dtype = torch.long, device = device)
+        batch_X = torch.tensor(word_X, dtype=torch.long, device=device)
+        batch_Y = torch.tensor(word_Y, dtype=torch.long, device=device)
 
         return batch_X, batch_Y
