@@ -5,6 +5,7 @@
 import torch
 import Preprocess
 from Preprocess import pad_seq
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 PAD = 0
 UNK = 1
 PAD_TOKEN = '<PAD>'

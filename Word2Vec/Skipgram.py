@@ -4,6 +4,7 @@
 
 import torch
 from Preprocess import pad_seq
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 class DataloaderSG(object):
