@@ -3,8 +3,14 @@
 
 
 import torch
+import torch.nn as nn
+import torch.nn.functional as F
 from Preprocess import pad_seq
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+PAD = 0
+UNK = 1
+PAD_TOKEN = '<PAD>'
+UNK_TOKEN = '<UNK>'
 
 
 class DataloaderSG(object):
@@ -46,3 +52,24 @@ class DataloaderSG(object):
         batch_Y = torch.tensor(word_Y, dtype=torch.long, device=device)
 
         return batch_X, batch_Y
+
+
+class Skipgram(nn.Module):
+    def __init__(self, vocab_size, embedding_size):
+        super(Skipgram, self).__init__()
+        self.vocab_size = vocab_size
+        self.embedding_size = embedding_size
+        # 埋め込み
+        self.embedding = nn.Embedding(self.vocab_size, self.embedding_size)
+        # 全結合
+        self.linear = nn.Linear(self.embedding_size, self.vocab_size, bias=False)
+
+    def forward(self, batch_X, batch_Y):
+        emb_X = self.embedding(batch_X)
+        lin_X = self.linear(emb_X)
+        log_prob_X = F.log_softmax(lin_X, dim=-1)
+        log_prob_X = torch.gather(log_prob_X, 1, batch_Y)
+        # マスキング
+        log_prob_X = log_prob_X * (batch_Y != PAD).float()
+        loss = log_prob_X.sum(1).mean().neg()
+        return loss

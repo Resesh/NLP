@@ -3,6 +3,8 @@
 # settings token
 
 import torch
+import torch.nn as nn
+import torch.nn.functional as F
 import Preprocess
 from Preprocess import pad_seq
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -91,3 +93,24 @@ class DataloaderCBOW(object):
         batch_Y = torch.tensor(word_Y, dtype=torch.long, device=device)
 
         return batch_X, batch_Y
+
+
+class CBOW(nn.Nodule):
+    def __init__(self, vocab_size, embedding_size):
+        super(CBOW, self).__init__()
+        self.vocab_size = vocab_size
+        self.embedding_size = embedding_size
+        # 埋め込み
+        self.embedding = nn.Embedding(self.vocab_size, self.embedding_size)
+        # 全結合
+        self.linear = nn.Linear(self.embedding_size, self.vocab_size, bias=False)
+
+    def forward(self, batch_X, batch_Y):
+        emb_X = self.embedding(batch_X)
+        # padして次元追加
+        emb_X = emb_X * (batch_X != PAD).float().unsqueeze(-1)
+        sum_X = torch.sum(emb_X, dim=1)
+        lin_X = self.linear(sum_X)
+        log_prob_X = F.log_softmax(lin_X, dim=-1)
+        loss = F.nll_loss(log_prob_X, batch_Y)
+        return loss
